@@ -17,7 +17,7 @@ datasource db {
 model Session {
   id        String   @id
   sid       String   @unique
-  data      String   @db.MediumText  // MediumText may be needed for MySql
+  data      String   
   expiresAt   DateTime
 }
 // Prisma Session Store Docs - https://github.com/kleydon/prisma-session-store#readme
@@ -33,13 +33,16 @@ model User {
 model Folder {
   id      Int     @id @default(autoincrement())
   name    String  @unique
-  user    User    @relation(field: [userId], references: [id])
-  userId  Int     @unique
+  owner   User  @relation(fields: [ownerId], references: [id])
+  ownerId Int    
+  files   File[]
 }
 
 model File {
   id        Int     @id @default(autoincrement())
   name      String  @unique
-  folder    Folder  @relation(field: [folderId], references: [id])
-  folderId  Int     @unique  
+  folder    Folder  @relation(fields: [folderId], references: [id])
+  folderId  Int
+  owner     User    @relation(fields: [ownerId], references: [id])    
+  ownerId   Int  
 }
