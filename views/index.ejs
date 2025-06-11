@@ -3,9 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home Page</title>
+    <title>Welcome!</title>
     <!-- <link rel="stylesheet" href="/styles.css"> -->
 </head>
 <body>
-    <h1>Hello World</h1>
+    <% if (locals.user) {%>
+        <h1> Welcome back <%= user.firstname %></h1>
+        <% if (locals.user.member) { %>
+            <h2> You are a member! </h2>
+        <% } else { %>
+            <form action="/member-register" method="GET">
+                <button>Register as a member</button>
+        </form>
+        <% } %>
+        <% if (locals.user.admin) { %>
+            <h2> You are a admin! </h2>
+        <% } else { %>
+            <form action="/admin-register" method="GET">
+                <button>Register as a admin</button>
+        </form>
+        <% } %>
+        <form action="/log-out" method="GET">
+            <button>Log Out</button>
+
+    <% } else { %>
+        <h1> Welcome members and non-members! </h1>
+        <form action="/log-in" method="POST">
+            <label for="username">Email:</label>
+            <input id="username" name="username" placeholder="Your@email.com" type="email" />
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" />
+            <button>Log In</button>
+        </form>
+        <%- include("errors.ejs") %>
+        </br>
+        <form action="/sign-up" method="GET"> 
+            <div> Don't have an account? <button>Sign Up!</button> </div>
+        </form>
+    <% } %>
+
 </body>

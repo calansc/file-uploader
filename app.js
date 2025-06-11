@@ -39,6 +39,13 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use((req, res, next) => {
+  console.log("set res.locals.currentUser = req.user", req.user);
+  res.locals.currentUser = req.user;
+  console.log(res.locals.currentUser);
+  next();
+});
+
 app.use("/", indexRouter);
 
 app.use((err, req, res, next) => {
