@@ -20,4 +20,26 @@ model User {
   firstname  String
   lastname   String
   createdAt  DateTime @default(now())
+  folders    Folder[]
+  files      File[]
+}
+
+model File {
+  id          Int      @id @default(autoincrement())
+  filename    String
+  url         String   @unique
+  uploadedAt  DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id])
+  userId      Int
+  folder      Folder?  @relation(fields: [folderId], references: [id])
+  folderId    Int?
+}
+
+model Folder {
+  id         Int      @id @default(autoincrement())
+  name       String
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id])
+  userId     Int
+  files      File[]
 }
