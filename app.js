@@ -31,7 +31,21 @@ app.use(
   })
 );
 
+//middleware to make 'user' available in all templates
+app.use((req, res, next) => {
+  console.log("Req.user: ", req.user);
+  res.locals.user = req.user;
+  console.log("Locals.user: ", res.locals.user);
+  next();
+});
+
 app.use("/", indexRouter);
+
+//error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(err.statusCode || 500).send("Error!: ", err);
+});
 
 // development
 const PORT = process.env.PORT || 3000;
