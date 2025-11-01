@@ -24,9 +24,8 @@ model Session {
 
 model User {
   id         Int      @id @default(autoincrement())
-  email      String   @unique
-  firstname  String
-  lastname   String
+  username   String   @unique
+  password   String
   createdAt  DateTime @default(now())
   folders    Folder[]
   files      File[]

@@ -4,9 +4,11 @@ const path = require("path");
 require("dotenv").config();
 const expressSession = require("express-session");
 const { PrismaSessionStore } = require("@quixo3/prisma-session-store");
-const { PrismaClient } = require("@prisma/client");
+const prisma = require("./db/prismaClient");
+// const { PrismaClient } = require("@prisma/client");
 // const { PrismaClient } = require("./generated/prisma");
-const prisma = new PrismaClient();
+// const prisma = new PrismaClient();
+const flash = require("connect-flash");
 
 const indexRouter = require("./routes/indexRouter");
 
@@ -23,15 +25,23 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: true,
     saveUninitialized: true,
-    store: new PrismaSessionStore(new PrismaClient(), {
+    store: new PrismaSessionStore(prisma, {
       checkPeriod: 2 * 60 * 1000, //ms
       dbRecordIdIsSessionId: true,
       dbRecordIdFunction: undefined,
     }),
   })
 );
+// Flash Middleware
+app.use(flash());
+// middleware for flash messages in all templates
+app.use((req, res, next) => {
+  res.locals.success = req.flash("success");
+  res.locals.error = req.flash("error");
+  next();
+});
 
-//middleware to make 'user' available in all templates
+// middleware to make 'user' available in all templates
 app.use((req, res, next) => {
   console.log("Req.user: ", req.user);
   res.locals.user = req.user;

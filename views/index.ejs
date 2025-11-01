@@ -3,9 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>File Uploader</title>
+    <title><%= title %></title>
 </head>
 <body>
-    <h1>Hello File Uploaders!</h1>
+    <% if(locals.success) {%>
+        <div><%= success %></div>
+    <% } %>
+        <% if(locals.error) {%>
+        <div><%= error %></div>
+    <% } %>
+    <% if (locals.user) {%>
+        <h1 Welcome, <%= user.username %>!</h1>
+        <form action="/logout" method="POST">
+            <button type="submit">Logout</button>
+        </form>
+    <% } else { %>
+         <h1>Hello File Uploaders!</h1>
+        <h3>Please login to upload and access files:</h3>
+        <form action="/login" method="POST">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+            <br>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+            <br>
+            <button type="submit">Login</button>
+        </form>
+        <h3>Not a member yet?</h3>
+        <form action="/register" method="GET">
+            <button type="submit">Register Here</button>
+        </form>
+    <% } %>
 </body>
 </html>
