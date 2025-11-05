@@ -32,7 +32,6 @@ async function postLogin(req, res, next) {
   console.log("postLogin called", req.body);
   passport.authenticate("local", {
     successRedirect: "/",
-    // info on success
     failureRedirect: "/",
     failureFlash: true,
   })(req, res, next);
