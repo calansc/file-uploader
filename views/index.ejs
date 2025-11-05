@@ -13,10 +13,16 @@
         <div><%= error %></div>
     <% } %>
     <% if (locals.user) {%>
-        <h1 Welcome, <%= user.username %>!</h1>
-        <form action="/logout" method="POST">
+        <h1>Welcome, <%= user.username %>!</h1>
+        <form action="/logout" method="GET">
             <button type="submit">Logout</button>
         </form>
+        <div>
+            <h2>Upload File:</h2>
+        </div>
+        <div>
+            <h2>Folders:</h2>
+        </div>
     <% } else { %>
          <h1>Hello File Uploaders!</h1>
         <h3>Please login to upload and access files:</h3>

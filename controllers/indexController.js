@@ -34,9 +34,20 @@ async function postLogin(req, res, next) {
     successRedirect: "/",
     // info on success
     failureRedirect: "/",
-    // info on failure
+    failureFlash: true,
   })(req, res, next);
-  // res.redirect("/");
+}
+
+async function getLogout(req, res) {
+  req.logout((err) => {
+    if (err) {
+      console.error("Logout Error:", err);
+      return next(err);
+    } else {
+      req.flash("success", "Logged out successfully.");
+      res.redirect("/");
+    }
+  });
 }
 
 module.exports = {
@@ -44,4 +55,5 @@ module.exports = {
   getRegister,
   postRegister,
   postLogin,
+  getLogout,
 };
