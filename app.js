@@ -3,6 +3,7 @@ const app = express();
 const path = require("path");
 require("dotenv").config();
 const expressSession = require("express-session");
+const passport = require("./config/passport");
 const { PrismaSessionStore } = require("@quixo3/prisma-session-store");
 const prisma = require("./db/prismaClient");
 // const { PrismaClient } = require("@prisma/client");
@@ -32,6 +33,10 @@ app.use(
     }),
   })
 );
+
+app.use(passport.initialize());
+app.use(passport.session());
+
 // Flash Middleware
 app.use(flash());
 // middleware for flash messages in all templates

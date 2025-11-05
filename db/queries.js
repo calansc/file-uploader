@@ -29,9 +29,22 @@ async function findUserByUsername(username) {
   }
 }
 
+async function findUserById(id) {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id },
+    });
+    return user;
+  } catch (err) {
+    console.error("Error finding user by ID:", err);
+    throw err;
+  }
+}
+
 // async function createFolder();
 
 module.exports = {
   createUser,
   findUserByUsername,
+  findUserById,
 };

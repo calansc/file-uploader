@@ -1,9 +1,10 @@
 const queries = require("../db/queries");
 const bcryptjs = require("bcryptjs");
 const passport = require("../config/passport");
+// require("../config/passport.js");
 
 async function getIndex(req, res) {
-  res.render("index", { title: "File Uploader" });
+  res.render("index", { title: "File Uploader", user: req.user });
 }
 
 async function getRegister(req, res) {
@@ -26,16 +27,16 @@ async function postRegister(req, res) {
   }
 }
 
-async function postLogin(req, res) {
-  const { username, password } = req.body;
-  console.log("postLogin called");
-  try {
-    res.redirect("/");
-  } catch (err) {
-    console.error(err);
-    req.flash("error", "Login failed. Please try again.");
-    return next(err);
-  }
+async function postLogin(req, res, next) {
+  // const { username, password } = req.body;
+  console.log("postLogin called", req.body);
+  passport.authenticate("local", {
+    successRedirect: "/",
+    // info on success
+    failureRedirect: "/",
+    // info on failure
+  })(req, res, next);
+  // res.redirect("/");
 }
 
 module.exports = {
