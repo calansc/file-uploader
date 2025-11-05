@@ -1,10 +1,29 @@
 const queries = require("../db/queries");
 const bcryptjs = require("bcryptjs");
 const passport = require("../config/passport");
+const { post } = require("../routes/indexRouter");
 // require("../config/passport.js");
 
 async function getIndex(req, res) {
-  res.render("index", { title: "File Uploader", user: req.user });
+  const userId = req.user ? req.user.id : null;
+  if (!userId) {
+    res.render("index", {
+      title: "File Uploader",
+      user: req.user,
+    });
+    return;
+  }
+  try {
+    // get folders
+    const folders = await queries.getFoldersByUserId(userId);
+    res.render("index", {
+      title: "File Uploader",
+      user: req.user,
+      folders: folders,
+    });
+  } catch (err) {
+    console.error("Error fetching folders for user ID:", userId, err);
+  }
 }
 
 async function getRegister(req, res) {
@@ -49,10 +68,32 @@ async function getLogout(req, res) {
   });
 }
 
+async function postNewFolder(req, res) {
+  console.log(
+    "postNewFolder userId:",
+    req.user.id,
+    "named:",
+    req.body.folderName
+  );
+  try {
+    const newFolder = await queries.createFolder(
+      req.user.id,
+      req.body.folderName
+    );
+    req.flash("success", "Folder created successfully.");
+    res.status(201).redirect("/");
+  } catch (err) {
+    console.error(err);
+    req.flash("error", "Folder creation failed. Please try again.");
+    return next(err);
+  }
+}
+
 module.exports = {
   getIndex,
   getRegister,
   postRegister,
   postLogin,
   getLogout,
+  postNewFolder,
 };

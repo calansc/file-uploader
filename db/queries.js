@@ -7,9 +7,11 @@ async function createUser(username, password) {
       data: {
         username,
         password,
+        folders: {
+          create: [{ name: username }],
+        },
       },
     });
-    // call to create user folder her?
     return newUser;
   } catch (err) {
     console.error("Error creating user:", err);
@@ -41,10 +43,38 @@ async function findUserById(id) {
   }
 }
 
-// async function createFolder();
+async function getFoldersByUserId(userId) {
+  try {
+    const folders = await prisma.folder.findMany({
+      where: { userId },
+    });
+    return folders;
+  } catch (err) {
+    console.error("Error fetching folders by user ID:", err);
+    throw err;
+  }
+}
+
+async function createFolder(userId, folderName) {
+  console.log("DB Create Folder for userId:", userId, "named:", folderName);
+  try {
+    const newFolder = await prisma.folder.create({
+      data: {
+        name: folderName,
+        user: { connect: { id: userId } },
+      },
+    });
+    return newFolder;
+  } catch (err) {
+    console.error("Error creating folder:", err);
+    throw err;
+  }
+}
 
 module.exports = {
   createUser,
   findUserByUsername,
   findUserById,
+  getFoldersByUserId,
+  createFolder,
 };

@@ -2,6 +2,10 @@ const { Router } = require("express");
 const indexController = require("../controllers/indexController");
 const indexRouter = Router();
 
+indexRouter.post("/newFolder", (req, res) => {
+  indexController.postNewFolder(req, res);
+});
+
 indexRouter.get("/logout", (req, res) => {
   indexController.getLogout(req, res);
 });
