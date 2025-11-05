@@ -18,11 +18,16 @@
             <button type="submit">Logout</button>
         </form>
         <div>
-            <h2>Upload File:</h2>
+            <h2>Folders: -- left bar</h2>
+            <form action="/newFolder" method="POST">
+                <label for="folderName"></label>
+                <input type="text" id="folderName" name="folderName" placeholder="New Folder Name" required>
+                <button type="submit">Create Folder</button>
+            </form>
+            <div>Folder list here -- folder list on left?</div>
         </div>
-        <div>
-            <h2>Folders:</h2>
-        </div>
+        <div>chosen folder in middle</div>
+        <div>files in folder</div>
     <% } else { %>
          <h1>Hello File Uploaders!</h1>
         <h3>Please login to upload and access files:</h3>
