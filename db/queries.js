@@ -70,6 +70,21 @@ async function createFolder(userId, folderName) {
     throw err;
   }
 }
+async function getFolderByNameAndUserId(userId, folderName) {
+  try {
+    const folder = await prisma.folder.findFirst({
+      where: {
+        userId,
+        name: folderName,
+      },
+    });
+    console.log("Found folder:", folder);
+    return folder ? folder.id : null;
+  } catch (err) {
+    console.error("Error getting folder ID by name:", err);
+    throw err;
+  }
+}
 
 module.exports = {
   createUser,
@@ -77,4 +92,5 @@ module.exports = {
   findUserById,
   getFoldersByUserId,
   createFolder,
+  getFolderByNameAndUserId,
 };

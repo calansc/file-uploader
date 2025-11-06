@@ -48,9 +48,9 @@ app.use((req, res, next) => {
 
 // middleware to make 'user' available in all templates
 app.use((req, res, next) => {
-  console.log("Req.user: ", req.user);
+  // console.log("Req.user: ", req.user);
   res.locals.user = req.user;
-  console.log("Locals.user: ", res.locals.user);
+  // console.log("Locals.user: ", res.locals.user);
   next();
 });
 

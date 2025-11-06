@@ -27,13 +27,16 @@
             <div>Folder list here -- folder list on left?</div>
             <div>
                 <% folders.forEach(folder => { %>
-                    <form action="/folder/<%= folder.id %>" method="GET" style="display: inline;">
+                    <form action="/folder/<%= folder.name %>" method="GET" style="display: inline;">
                         <button type="submit"><%= folder.name %></button>
                     </form>
                 <% }); %>
             </div>
         </div>
-        <div>chosen folder in middle</div>
+        <div>
+            <h2>Current Folder: <%= selectedFolder.name %></h2>
+            <div>Files in selected folder -- main area</div>
+        </div>
         <div>files in folder</div>
     <% } else { %>
          <h1>Hello File Uploaders!</h1>

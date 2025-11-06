@@ -2,6 +2,10 @@ const { Router } = require("express");
 const indexController = require("../controllers/indexController");
 const indexRouter = Router();
 
+indexRouter.get("/folder/:name", (req, res) => {
+  indexController.selectFolder(req, res);
+});
+
 indexRouter.post("/newFolder", (req, res) => {
   indexController.postNewFolder(req, res);
 });

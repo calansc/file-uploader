@@ -2,6 +2,7 @@ const queries = require("../db/queries");
 const bcryptjs = require("bcryptjs");
 const passport = require("../config/passport");
 const { post } = require("../routes/indexRouter");
+const { folder } = require("../db/prismaClient");
 // require("../config/passport.js");
 
 async function getIndex(req, res) {
@@ -20,6 +21,7 @@ async function getIndex(req, res) {
       title: "File Uploader",
       user: req.user,
       folders: folders,
+      selectedFolder: null,
     });
   } catch (err) {
     console.error("Error fetching folders for user ID:", userId, err);
@@ -89,6 +91,23 @@ async function postNewFolder(req, res) {
   }
 }
 
+async function selectFolder(req, res) {
+  const folderName = req.params.name;
+  const userId = req.user.id;
+  console.log("selectFolder called for folder:", folderName, "userId:", userId);
+  // get folder id from name and userId
+  const folder = await queries.getFolderByNameAndUserId(userId, folderName);
+  // get folders for sidebar
+  const folders = await queries.getFoldersByUserId(userId);
+  // render index with selected folder
+  res.render("index", {
+    title: "File Uploader",
+    user: req.user,
+    folders: folders,
+    selectedFolder: folder,
+  });
+}
+
 module.exports = {
   getIndex,
   getRegister,
@@ -96,4 +115,5 @@ module.exports = {
   postLogin,
   getLogout,
   postNewFolder,
+  selectFolder,
 };
