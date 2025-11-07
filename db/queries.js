@@ -78,8 +78,8 @@ async function getFolderByNameAndUserId(userId, folderName) {
         name: folderName,
       },
     });
-    console.log("Found folder:", folder);
-    return folder ? folder.id : null;
+    // console.log("Found folder:", folder);
+    return folder ? folder : null;
   } catch (err) {
     console.error("Error getting folder ID by name:", err);
     throw err;

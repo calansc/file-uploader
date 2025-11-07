@@ -1,9 +1,10 @@
 const { Router } = require("express");
 const indexController = require("../controllers/indexController");
 const indexRouter = Router();
+const { isAuth } = require("../middleware/authMiddleware");
 
 indexRouter.get("/folder/:name", (req, res) => {
-  indexController.selectFolder(req, res);
+  indexController.getIndex(req, res);
 });
 
 indexRouter.post("/newFolder", (req, res) => {
@@ -26,8 +27,12 @@ indexRouter.get("/register", (req, res) => {
   indexController.getRegister(req, res);
 });
 
-indexRouter.get("/", (req, res) => {
+indexRouter.get("/directory", (req, res) => {
   indexController.getIndex(req, res);
+});
+
+indexRouter.get("/", (req, res) => {
+  indexController.welcomePage(req, res);
 });
 
 module.exports = indexRouter;

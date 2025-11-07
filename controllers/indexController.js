@@ -5,26 +5,54 @@ const { post } = require("../routes/indexRouter");
 const { folder } = require("../db/prismaClient");
 // require("../config/passport.js");
 
+// async function selectFolder(req, res) {
+//   const folderName = req.params.name;
+//   const userId = req.user.id;
+//   console.log("selectFolder called for folder:", folderName, "userId:", userId);
+//   // get folder id from name and userId
+//   const folder = await queries.getFolderByNameAndUserId(userId, folderName);
+//   // get folders for sidebar
+//   const folders = await queries.getFoldersByUserId(userId);
+//   // render index with selected folder
+//   res.render("index", {
+//     title: "File Uploader",
+//     user: req.user,
+//     folders: folders,
+//     selectedFolder: folder,
+//   });
+// }
+
+async function welcomePage(req, res) {
+  if (req.isAuthenticated()) {
+    console.log("Authenticated user");
+    // what to call login/signup home page vs logged in / authenticated home page?
+    res.redirect("/directory");
+  } else {
+    console.log("Unauthenticated user");
+    res.render("welcome", { title: "Welcome" });
+  }
+}
+
 async function getIndex(req, res) {
   const userId = req.user ? req.user.id : null;
-  if (!userId) {
-    res.render("index", {
-      title: "File Uploader",
-      user: req.user,
-    });
-    return;
-  }
+  const folderName = req.params.name;
   try {
     // get folders
     const folders = await queries.getFoldersByUserId(userId);
+    // get selected folder, if any
+    const selectedFolder = await queries.getFolderByNameAndUserId(
+      userId,
+      folderName
+    );
+    // console.log("getIndex selectedFolder:", selectedFolder);
     res.render("index", {
       title: "File Uploader",
       user: req.user,
       folders: folders,
-      selectedFolder: null,
+      selectedFolder: selectedFolder,
     });
   } catch (err) {
-    console.error("Error fetching folders for user ID:", userId, err);
+    console.error("Error getIndex:", userId, folderName, err);
   }
 }
 
@@ -91,29 +119,12 @@ async function postNewFolder(req, res) {
   }
 }
 
-async function selectFolder(req, res) {
-  const folderName = req.params.name;
-  const userId = req.user.id;
-  console.log("selectFolder called for folder:", folderName, "userId:", userId);
-  // get folder id from name and userId
-  const folder = await queries.getFolderByNameAndUserId(userId, folderName);
-  // get folders for sidebar
-  const folders = await queries.getFoldersByUserId(userId);
-  // render index with selected folder
-  res.render("index", {
-    title: "File Uploader",
-    user: req.user,
-    folders: folders,
-    selectedFolder: folder,
-  });
-}
-
 module.exports = {
+  welcomePage,
   getIndex,
   getRegister,
   postRegister,
   postLogin,
   getLogout,
   postNewFolder,
-  selectFolder,
 };
