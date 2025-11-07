@@ -3,11 +3,11 @@ const indexController = require("../controllers/indexController");
 const indexRouter = Router();
 const { isAuth } = require("../middleware/authMiddleware");
 
-indexRouter.get("/folder/:name", (req, res) => {
+indexRouter.get("/folder/:name", isAuth, (req, res) => {
   indexController.getIndex(req, res);
 });
 
-indexRouter.post("/newFolder", (req, res) => {
+indexRouter.post("/newFolder", isAuth, (req, res) => {
   indexController.postNewFolder(req, res);
 });
 
@@ -27,7 +27,7 @@ indexRouter.get("/register", (req, res) => {
   indexController.getRegister(req, res);
 });
 
-indexRouter.get("/directory", (req, res) => {
+indexRouter.get("/directory", isAuth, (req, res) => {
   indexController.getIndex(req, res);
 });
 
