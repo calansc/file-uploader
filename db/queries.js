@@ -70,18 +70,34 @@ async function createFolder(userId, folderName) {
     throw err;
   }
 }
-async function getFolderByNameAndUserId(userId, folderName) {
+async function getFolderByIdAndUserId(folderId, userId) {
+  console.log("DB Get Folder by ID:", folderId);
   try {
     const folder = await prisma.folder.findFirst({
       where: {
-        userId,
-        name: folderName,
+        id: folderId,
+        userId: userId,
       },
     });
-    // console.log("Found folder:", folder);
+    console.log("Found folder:", folder);
     return folder ? folder : null;
   } catch (err) {
     console.error("Error getting folder ID by name:", err);
+    throw err;
+  }
+}
+
+async function deleteFolderByNameAndUserId(folderId) {
+  try {
+    const deletedFolder = await prisma.folder.delete({
+      where: {
+        id: folderId,
+      },
+    });
+    console.log("Deleted folder:", deletedFolder);
+    return deletedFolder;
+  } catch (err) {
+    console.error("Error deleting folder by name and user ID:", err);
     throw err;
   }
 }
@@ -92,5 +108,6 @@ module.exports = {
   findUserById,
   getFoldersByUserId,
   createFolder,
-  getFolderByNameAndUserId,
+  getFolderByIdAndUserId,
+  deleteFolderByNameAndUserId,
 };

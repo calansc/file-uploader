@@ -27,7 +27,7 @@
             <div>Folder list here -- folder list on left?</div>
             <div>
                 <% folders.forEach(folder => { %>
-                    <form action="/folder/<%= folder.name %>" method="GET" style="display: inline;">
+                    <form action="/folder/<%= folder.id %>" method="GET" style="display: inline;">
                         <button type="submit"><%= folder.name %></button>
                     </form>
                 <% }); %>
@@ -36,7 +36,20 @@
         <div>
             <% if (selectedFolder) { %>
             <h2>Current Folder: <%= selectedFolder.name %></h2>
-            <div>Files in selected folder -- main area</div>
+            <form action="/delete/<%= selectedFolder.id %>" method="POST" style="display: inline;">
+                <button type="submit">Delete Folder</button>
+            </form>
+            <form action="/edit/<%= selectedFolder.id %>" method="GET" style="display: inline;">
+                <button type="submit">Edit Folder</button>
+            </form>
+            <div>Files in selected folder -- main area
+                <form action="/upload/<%= selectedFolder.id %>" method="POST" enctype="multipart/form-data">
+                    <label for="fileUpload">Upload File:</label>
+                    <input type="file" id="fileUpload" name="fileUpload" required>
+                    <button type="submit">Upload</button>
+                </form>
+                <div>File list here</div>
+            </div>
             <% } else { %>
             <h2>No Folder Selected</h2>
             <% } %>

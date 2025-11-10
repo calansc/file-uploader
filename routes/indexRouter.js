@@ -3,7 +3,23 @@ const indexController = require("../controllers/indexController");
 const indexRouter = Router();
 const { isAuth } = require("../middleware/authMiddleware");
 
-indexRouter.get("/folder/:name", isAuth, (req, res) => {
+indexRouter.post("/upload/:id", isAuth, (req, res) => {
+  indexController.postUploadFile(req, res);
+});
+
+indexRouter.post("/delete/:id", isAuth, (req, res) => {
+  indexController.postDeleteFolder(req, res);
+});
+
+indexRouter.get("/edit/:id", isAuth, (req, res) => {
+  indexController.getEditFolder(req, res);
+});
+
+indexRouter.post("/edit/:id", isAuth, (req, res) => {
+  indexController.postEditFolder(req, res);
+});
+
+indexRouter.get("/folder/:id", isAuth, (req, res) => {
   indexController.getIndex(req, res);
 });
 

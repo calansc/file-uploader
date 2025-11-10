@@ -25,7 +25,6 @@ const { folder } = require("../db/prismaClient");
 async function welcomePage(req, res) {
   if (req.isAuthenticated()) {
     console.log("Authenticated user");
-    // what to call login/signup home page vs logged in / authenticated home page?
     res.redirect("/directory");
   } else {
     console.log("Unauthenticated user");
@@ -35,15 +34,17 @@ async function welcomePage(req, res) {
 
 async function getIndex(req, res) {
   const userId = req.user ? req.user.id : null;
-  const folderName = req.params.name;
+  // console.log("getIndex req.params.id:", req.params.id);
+  const folderId = Number(req.params.id);
+  // console.log("getIndex folderId:", folderId);
   try {
     // get folders
     const folders = await queries.getFoldersByUserId(userId);
     // get selected folder, if any
-    const selectedFolder = await queries.getFolderByNameAndUserId(
-      userId,
-      folderName
-    );
+    let selectedFolder = null;
+    if (folderId > 0) {
+      selectedFolder = await queries.getFolderByIdAndUserId(folderId, userId);
+    }
     // console.log("getIndex selectedFolder:", selectedFolder);
     res.render("index", {
       title: "File Uploader",
@@ -119,6 +120,42 @@ async function postNewFolder(req, res) {
   }
 }
 
+async function postDeleteFolder(req, res) {
+  console.log(
+    "postDeleteFolder called userId:",
+    req.user.id,
+    "folder:",
+    req.params.id
+  );
+  const idString = req.params.id;
+  const idInt = Number(idString);
+  // delete folder from db, prompt to delete?
+  try {
+    await queries.deleteFolderByNameAndUserId(idInt);
+    req.flash("success", "Folder deleted successfully.");
+    res.redirect("/");
+  } catch (err) {
+    console.error("Error deleting folder:", err);
+    req.flash("error", "Folder deletion failed. Please try again.");
+    return next(err);
+  }
+}
+
+async function getEditFolder(req, res) {
+  console.log(
+    "getEditFolder called userId:",
+    req.user.id,
+    "folder:",
+    req.params.name
+  );
+  // render edit folder page
+}
+
+async function postEditFolder(req, res) {
+  console.log("postEditFolder called");
+  // update db with new folder info
+}
+
 module.exports = {
   welcomePage,
   getIndex,
@@ -127,4 +164,7 @@ module.exports = {
   postLogin,
   getLogout,
   postNewFolder,
+  postDeleteFolder,
+  getEditFolder,
+  postEditFolder,
 };
