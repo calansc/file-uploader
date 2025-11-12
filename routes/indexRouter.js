@@ -2,10 +2,17 @@ const { Router } = require("express");
 const indexController = require("../controllers/indexController");
 const indexRouter = Router();
 const { isAuth } = require("../middleware/authMiddleware");
+const multer = require("multer");
+const upload = multer({ dest: "uploads/" });
 
-indexRouter.post("/upload/:id", isAuth, (req, res) => {
-  indexController.postUploadFile(req, res);
-});
+indexRouter.post(
+  "/upload/:id",
+  isAuth,
+  upload.single("fileUpload"),
+  (req, res) => {
+    indexController.postUploadFile(req, res);
+  }
+);
 
 indexRouter.post("/delete/:id", isAuth, (req, res) => {
   indexController.postDeleteFolder(req, res);

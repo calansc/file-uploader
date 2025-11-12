@@ -173,6 +173,43 @@ async function postEditFolder(req, res) {
   }
 }
 
+async function postUploadFile(req, res) {
+  console.log(
+    "postUploadFile called userId:",
+    req.user.id,
+    "folderId:",
+    req.params.id,
+    "file:",
+    req.file
+  );
+  const userId = req.user.id;
+  const folderId = Number(req.params.id);
+  const uploadedFile = req.file;
+
+  if (!uploadedFile) {
+    req.flash("error", "No file uploaded. Please try again.");
+    return res.redirect(`/folder/${folderId}`);
+  }
+
+  try {
+    const createFile = await queries.createFile(
+      userId,
+      folderId,
+      uploadedFile.filename,
+      uploadedFile.path,
+      uploadedFile.mimetype,
+      uploadedFile.size
+    );
+    console.log("File created in DB:", createFile);
+    req.flash("success", "File uploaded successfully.");
+    res.redirect(`/folder/${folderId}`);
+  } catch (err) {
+    console.error("Error uploading file:", err);
+    req.flash("error", "File upload failed. Please try again.");
+    return next(err);
+  }
+}
+
 module.exports = {
   welcomePage,
   getIndex,
@@ -184,4 +221,5 @@ module.exports = {
   postDeleteFolder,
   getEditFolder,
   postEditFolder,
+  postUploadFile,
 };

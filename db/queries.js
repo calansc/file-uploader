@@ -120,6 +120,26 @@ async function updateFolderName(folderId, newName) {
   }
 }
 
+async function createFile(userId, folderId, fileName, path, mimetype, size) {
+  console.log("DB Create File in folderId:", folderId, "for userId:", userId);
+  try {
+    const newFile = await prisma.file.create({
+      data: {
+        fileName: fileName,
+        path: path,
+        mimetype: mimetype,
+        size: size,
+        user: { connect: { id: userId } },
+        folder: { connect: { id: folderId } },
+      },
+    });
+    return newFile;
+  } catch (err) {
+    console.error("Error creating file:", err);
+    throw err;
+  }
+}
+
 module.exports = {
   createUser,
   findUserByUsername,
@@ -129,4 +149,5 @@ module.exports = {
   getFolderByIdAndUserId,
   deleteFolderByNameAndUserId,
   updateFolderName,
+  createFile,
 };
