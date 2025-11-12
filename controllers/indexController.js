@@ -145,15 +145,32 @@ async function getEditFolder(req, res) {
   console.log(
     "getEditFolder called userId:",
     req.user.id,
-    "folder:",
-    req.params.name
+    "folderId:",
+    req.params.id
   );
-  // render edit folder page
+  let userId = req.user.id;
+  let folderId = Number(req.params.id);
+  let selectedFolder = await queries.getFolderByIdAndUserId(folderId, userId);
+  res.render("editFolder", {
+    title: "Edit Folder",
+    selectedFolder: selectedFolder,
+  });
 }
 
 async function postEditFolder(req, res) {
-  console.log("postEditFolder called");
+  console.log("postEditFolder called:", req.params.id, req.body.folderName);
   // update db with new folder info
+  try {
+    const folderId = Number(req.params.id);
+    const newName = req.body.folderName;
+    await queries.updateFolderName(folderId, newName);
+    req.flash("success", "Folder updated successfully.");
+    res.redirect("/");
+  } catch (err) {
+    console.error("Error updating folder:", err);
+    req.flash("error", "Folder update failed. Please try again.");
+    return next(err);
+  }
 }
 
 module.exports = {

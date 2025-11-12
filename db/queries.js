@@ -102,6 +102,24 @@ async function deleteFolderByNameAndUserId(folderId) {
   }
 }
 
+async function updateFolderName(folderId, newName) {
+  try {
+    const updatedFolder = await prisma.folder.update({
+      where: {
+        id: folderId,
+      },
+      data: {
+        name: newName,
+      },
+    });
+    console.log("Updated folder:", updatedFolder);
+    return updatedFolder;
+  } catch (err) {
+    console.error("Error updating folder name:", err);
+    throw err;
+  }
+}
+
 module.exports = {
   createUser,
   findUserByUsername,
@@ -110,4 +128,5 @@ module.exports = {
   createFolder,
   getFolderByIdAndUserId,
   deleteFolderByNameAndUserId,
+  updateFolderName,
 };

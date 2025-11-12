@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+</head>
+<body>
+    <% if(locals.success) {%>
+        <div><%= success %></div>
+    <% } %>
+        <% if(locals.error) {%>
+        <div><%= error %></div>
+    <% } %>
+    <% if (locals.user) {%>
+        <h1>Welcome, <%= user.username %>!</h1>
+        <form action="/logout" method="GET">
+            <button type="submit">Logout</button>
+        </form>
+        <div>
+            <h2>Edit Folder: <%= selectedFolder.name %></h2>
+            <form action="/edit/<%= selectedFolder.id %>" method="POST">
+                <label for="folderName">Folder Name:</label>
+                <input type="text" id="folderName" name="folderName" value="<%= selectedFolder.name %>" required>
+                <button type="submit">Save Changes</button>
+            </form>
+        </div> 
+    <% } else { %>
+         <h1>Hello File Uploaders!</h1>
+        <h3>Please login to upload and access files</h3>
+        <form action="/" method="GET">
+            <button type="submit">Go to Login</button>
+        </form>
+    <% } %>
+</body>
+</html>
