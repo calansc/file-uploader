@@ -44,6 +44,9 @@ async function getIndex(req, res) {
     let selectedFolder = null;
     if (folderId > 0) {
       selectedFolder = await queries.getFolderByIdAndUserId(folderId, userId);
+      folderFiles = await queries.getFolderFiles(folderId, userId);
+      console.log("getIndex folderFiles:", folderFiles);
+      selectedFolder.files = folderFiles;
     }
     // console.log("getIndex selectedFolder:", selectedFolder);
     res.render("index", {
@@ -195,7 +198,7 @@ async function postUploadFile(req, res) {
     const createFile = await queries.createFile(
       userId,
       folderId,
-      uploadedFile.filename,
+      uploadedFile.originalname,
       uploadedFile.path,
       uploadedFile.mimetype,
       uploadedFile.size
@@ -206,6 +209,41 @@ async function postUploadFile(req, res) {
   } catch (err) {
     console.error("Error uploading file:", err);
     req.flash("error", "File upload failed. Please try again.");
+    return next(err);
+  }
+}
+
+async function postDeleteFile(req, res) {
+  console.log(
+    "postDeleteFile called userId:",
+    req.user.id,
+    "fileId:",
+    req.params.id
+  );
+  const fileId = Number(req.params.id);
+  try {
+    await queries.deleteFileById(fileId);
+    req.flash("success", "File deleted successfully.");
+    res.redirect("/");
+  } catch (err) {
+    console.error("Error deleting file:", err);
+    req.flash("error", "File deletion failed. Please try again.");
+    return next(err);
+  }
+}
+
+async function getFile(req, res) {
+  const fileId = Number(req.params.id);
+  try {
+    const file = await queries.getFileById(fileId);
+    if (!file) {
+      req.flash("error", "File not found.");
+      return res.redirect("/");
+    }
+    res.download(file.path, file.fileName);
+  } catch (err) {
+    console.error("Error downloading file:", err);
+    req.flash("error", "File download failed. Please try again.");
     return next(err);
   }
 }
@@ -222,4 +260,6 @@ module.exports = {
   getEditFolder,
   postEditFolder,
   postUploadFile,
+  postDeleteFile,
+  getFile,
 };

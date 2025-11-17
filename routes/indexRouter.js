@@ -5,6 +5,14 @@ const { isAuth } = require("../middleware/authMiddleware");
 const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 
+indexRouter.get("/files/:id", isAuth, (req, res) => {
+  indexController.getFile(req, res);
+});
+
+indexRouter.post("/deleteFile/:id", isAuth, (req, res) => {
+  indexController.postDeleteFile(req, res);
+});
+
 indexRouter.post(
   "/upload/:id",
   isAuth,

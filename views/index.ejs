@@ -48,7 +48,22 @@
                     <input type="file" id="fileUpload" name="fileUpload" required>
                     <button type="submit">Upload</button>
                 </form>
-                <div>File list here</div>
+                <div>
+                    <% if (selectedFolder.files && selectedFolder.files.length > 0) { %>
+                        <ul>
+                            <% selectedFolder.files.forEach(file => { %>
+                                <li>
+                                    <a href="/files/<%= file.id %>"><%= file.fileName %></a>
+                                    <form action="/deleteFile/<%= file.id %>" method="POST" style="display: inline;">
+                                        <button type="submit">Delete</button>
+                                    </form>
+                                </li>
+                            <% }); %>
+                        </ul>
+                    <% } else { %>
+                        <p>No files in this folder.</p>
+                    <% } %>
+                </div>
             </div>
             <% } else { %>
             <h2>No Folder Selected</h2>

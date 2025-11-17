@@ -1,3 +1,4 @@
+const { get } = require("http");
 const prisma = require("../db/prismaClient");
 
 async function createUser(username, password) {
@@ -120,12 +121,19 @@ async function updateFolderName(folderId, newName) {
   }
 }
 
-async function createFile(userId, folderId, fileName, path, mimetype, size) {
+async function createFile(
+  userId,
+  folderId,
+  originalname,
+  path,
+  mimetype,
+  size
+) {
   console.log("DB Create File in folderId:", folderId, "for userId:", userId);
   try {
     const newFile = await prisma.file.create({
       data: {
-        fileName: fileName,
+        fileName: originalname,
         path: path,
         mimetype: mimetype,
         size: size,
@@ -140,6 +148,50 @@ async function createFile(userId, folderId, fileName, path, mimetype, size) {
   }
 }
 
+async function getFolderFiles(folderId, userId) {
+  try {
+    const fileList = await prisma.file.findMany({
+      where: {
+        folderId: folderId,
+        userId: userId,
+      },
+    });
+    return fileList;
+  } catch (err) {
+    console.error("Error fetching files by folder ID and user ID:", err);
+    throw err;
+  }
+}
+
+async function deleteFileById(fileId) {
+  try {
+    const deletedFile = await prisma.file.delete({
+      where: {
+        id: fileId,
+      },
+    });
+    console.log("Deleted file:", deletedFile);
+    return deletedFile;
+  } catch (err) {
+    console.error("Error deleting file by ID:", err);
+    throw err;
+  }
+}
+
+async function getFileById(fileId) {
+  try {
+    const file = await prisma.file.findUnique({
+      where: {
+        id: fileId,
+      },
+    });
+    return file;
+  } catch (err) {
+    console.error("Error fetching file by ID:", err);
+    throw err;
+  }
+}
+
 module.exports = {
   createUser,
   findUserByUsername,
@@ -150,4 +202,7 @@ module.exports = {
   deleteFolderByNameAndUserId,
   updateFolderName,
   createFile,
+  getFolderFiles,
+  deleteFileById,
+  getFileById,
 };
