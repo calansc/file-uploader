@@ -3,7 +3,15 @@ const indexController = require("../controllers/indexController");
 const indexRouter = Router();
 const { isAuth } = require("../middleware/authMiddleware");
 const multer = require("multer");
-const upload = multer({ dest: "uploads/" });
+const { fileSizeLimitErrorHandler } = require("../middleware/errorMiddleware");
+const upload = multer({
+  dest: "uploads/",
+  limits: { fileSize: 5 * 1024 * 1024 },
+}); // 5 MB limit
+
+indexRouter.post("/share/file/:id", isAuth, (req, res) => {
+  indexController.postShareFile(req, res);
+});
 
 indexRouter.get("/files/:id", isAuth, (req, res) => {
   indexController.getFile(req, res);
@@ -17,7 +25,9 @@ indexRouter.post(
   "/upload/:id",
   isAuth,
   upload.single("fileUpload"),
+  fileSizeLimitErrorHandler,
   (req, res) => {
+    // console.log("Uploaded file info:", req.file);
     indexController.postUploadFile(req, res);
   }
 );

@@ -1,26 +1,9 @@
 const queries = require("../db/queries");
 const bcryptjs = require("bcryptjs");
 const passport = require("../config/passport");
-const { post } = require("../routes/indexRouter");
-const { folder } = require("../db/prismaClient");
+// const { post } = require("../routes/indexRouter");
+// const { folder } = require("../db/prismaClient");
 // require("../config/passport.js");
-
-// async function selectFolder(req, res) {
-//   const folderName = req.params.name;
-//   const userId = req.user.id;
-//   console.log("selectFolder called for folder:", folderName, "userId:", userId);
-//   // get folder id from name and userId
-//   const folder = await queries.getFolderByNameAndUserId(userId, folderName);
-//   // get folders for sidebar
-//   const folders = await queries.getFoldersByUserId(userId);
-//   // render index with selected folder
-//   res.render("index", {
-//     title: "File Uploader",
-//     user: req.user,
-//     folders: folders,
-//     selectedFolder: folder,
-//   });
-// }
 
 async function welcomePage(req, res) {
   if (req.isAuthenticated()) {
@@ -185,31 +168,37 @@ async function postUploadFile(req, res) {
     "file:",
     req.file
   );
-  const userId = req.user.id;
-  const folderId = Number(req.params.id);
-  const uploadedFile = req.file;
+  if (req.file) {
+    const userId = req.user.id;
+    const folderId = Number(req.params.id);
+    const uploadedFile = req.file;
 
-  if (!uploadedFile) {
-    req.flash("error", "No file uploaded. Please try again.");
-    return res.redirect(`/folder/${folderId}`);
-  }
+    if (!uploadedFile) {
+      req.flash("error", "No file uploaded. Please try again.");
+      return res.redirect(`/folder/${folderId}`);
+    }
 
-  try {
-    const createFile = await queries.createFile(
-      userId,
-      folderId,
-      uploadedFile.originalname,
-      uploadedFile.path,
-      uploadedFile.mimetype,
-      uploadedFile.size
-    );
-    console.log("File created in DB:", createFile);
-    req.flash("success", "File uploaded successfully.");
-    res.redirect(`/folder/${folderId}`);
-  } catch (err) {
-    console.error("Error uploading file:", err);
-    req.flash("error", "File upload failed. Please try again.");
-    return next(err);
+    try {
+      const createFile = await queries.createFile(
+        userId,
+        folderId,
+        uploadedFile.originalname,
+        uploadedFile.path,
+        uploadedFile.mimetype,
+        uploadedFile.size
+      );
+      console.log("File created in DB:", createFile);
+      req.flash("success", "File uploaded successfully.");
+      res.redirect(`/folder/${folderId}`);
+    } catch (err) {
+      console.error("Error uploading file:", err);
+      req.flash("error", "File upload failed. Please try again.");
+      return next(err);
+    }
+  } else {
+    console.log("No file uploaded or file size exceeds limit.");
+    res.status(400).send("No file uploaded or file size exceeds limit.");
+    // res.redirect(`/folder/${req.params.id}`);
   }
 }
 
