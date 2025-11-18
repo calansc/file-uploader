@@ -29,6 +29,7 @@ model User {
   createdAt  DateTime @default(now())
   folders    Folder[]
   files      File[]
+  shareLinks ShareLink[]
 }
 
 model File {
@@ -42,6 +43,7 @@ model File {
   userId          Int
   folder          Folder?  @relation(fields: [folderId], references: [id])
   folderId        Int?
+  shareLinks      ShareLink[]
 }
 
 model Folder {
@@ -51,4 +53,22 @@ model Folder {
   user       User     @relation(fields: [userId], references: [id])
   userId     Int
   files      File[]
+  shareLinks ShareLink[]
+}
+
+model ShareLink {
+  id          Int      @id @default(autoincrement())
+  expiresAt   DateTime
+  itemType    DocType
+  folder      Folder?  @relation(fields: [folderId], references: [id])
+  folderId    Int?
+  file        File?     @relation(fields: [fileId], references: [id])
+  fileId      Int?
+  user        User     @relation(fields: [userId], references: [id])
+  userId      Int
+}
+
+enum DocType {
+  FILE
+  FOLDER
 }
