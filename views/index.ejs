@@ -36,11 +36,14 @@
         <div>
             <% if (selectedFolder) { %>
             <h2>Current Folder: <%= selectedFolder.name %></h2>
-            <form action="/delete/<%= selectedFolder.id %>" method="POST" style="display: inline;">
-                <button type="submit">Delete Folder</button>
+            <form action="/share/folder/<%= selectedFolder.id %>" method="GET" style="display: inline;">
+                <button type="submit">Share Folder</button>
             </form>
             <form action="/edit/<%= selectedFolder.id %>" method="GET" style="display: inline;">
                 <button type="submit">Edit Folder</button>
+            </form>
+            <form action="/delete/folder/<%= selectedFolder.id %>" method="GET" style="display: inline;">
+                <button type="submit">Delete Folder</button>
             </form>
             <div>Files in selected folder -- main area
                 <form action="/upload/<%= selectedFolder.id %>" method="POST" enctype="multipart/form-data">
@@ -54,10 +57,10 @@
                             <% selectedFolder.files.forEach(file => { %>
                                 <li>
                                     <a href="/files/<%= file.id %>"><%= file.fileName %></a>
-                                    <form action="/share/file/<%= file.id %>" method="POST" style="display: inline;">
+                                    <form action="/share/file/<%= file.id %>" method="GET" style="display: inline;">
                                         <button type="submit">Share</button>
                                     </form>
-                                    <form action="/deleteFile/<%= file.id %>" method="POST" style="display: inline;">
+                                    <form action="/delete/file/<%= file.id %>" method="GET" style="display: inline;">
                                         <button type="submit">Delete</button>
                                     </form>
                                 </li>

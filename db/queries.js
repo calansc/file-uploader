@@ -72,7 +72,7 @@ async function createFolder(userId, folderName) {
   }
 }
 async function getFolderByIdAndUserId(folderId, userId) {
-  console.log("DB Get Folder by ID:", folderId);
+  // console.log("DB Get Folder by ID:", folderId);
   try {
     const folder = await prisma.folder.findFirst({
       where: {
@@ -80,7 +80,7 @@ async function getFolderByIdAndUserId(folderId, userId) {
         userId: userId,
       },
     });
-    console.log("Found folder:", folder);
+    // console.log("Found folder:", folder);
     return folder ? folder : null;
   } catch (err) {
     console.error("Error getting folder ID by name:", err);
@@ -178,16 +178,33 @@ async function deleteFileById(fileId) {
   }
 }
 
-async function getFileById(fileId) {
+async function getFileByIdAndUserId(fileId, userId) {
+  try {
+    const file = await prisma.file.findUnique({
+      where: {
+        id: fileId,
+        userId: userId,
+      },
+    });
+    return file;
+  } catch (err) {
+    console.error("Error fetching file by ID:", err);
+    throw err;
+  }
+}
+
+async function getFolderIdByFileId(fileId) {
+  console.log("DB Get Folder ID by File ID:", fileId);
   try {
     const file = await prisma.file.findUnique({
       where: {
         id: fileId,
       },
     });
-    return file;
+    // console.log("Fetched folder by file ID:", file);
+    return file.folderId;
   } catch (err) {
-    console.error("Error fetching file by ID:", err);
+    console.error("Error fetching folder by file ID:", err);
     throw err;
   }
 }
@@ -204,5 +221,6 @@ module.exports = {
   createFile,
   getFolderFiles,
   deleteFileById,
-  getFileById,
+  getFileByIdAndUserId,
+  getFolderIdByFileId,
 };

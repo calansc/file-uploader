@@ -13,12 +13,20 @@ indexRouter.post("/share/file/:id", isAuth, (req, res) => {
   indexController.postShareFile(req, res);
 });
 
+indexRouter.get("/share/file/:id", isAuth, (req, res) => {
+  indexController.getShareFile(req, res);
+});
+
 indexRouter.get("/files/:id", isAuth, (req, res) => {
   indexController.getFile(req, res);
 });
 
-indexRouter.post("/deleteFile/:id", isAuth, (req, res) => {
+indexRouter.post("/delete/file/:id", isAuth, (req, res) => {
   indexController.postDeleteFile(req, res);
+});
+
+indexRouter.get("/delete/file/:id", isAuth, (req, res) => {
+  indexController.getDeleteFile(req, res);
 });
 
 indexRouter.post(
@@ -32,8 +40,12 @@ indexRouter.post(
   }
 );
 
-indexRouter.post("/delete/:id", isAuth, (req, res) => {
+indexRouter.post("/delete/folder/:id", isAuth, (req, res) => {
   indexController.postDeleteFolder(req, res);
+});
+
+indexRouter.get("/delete/folder/:id", isAuth, (req, res) => {
+  indexController.getDeleteFolder(req, res);
 });
 
 indexRouter.get("/edit/:id", isAuth, (req, res) => {

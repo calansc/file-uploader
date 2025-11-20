@@ -1,6 +1,7 @@
 const queries = require("../db/queries");
 const bcryptjs = require("bcryptjs");
 const passport = require("../config/passport");
+// const { get } = require("http");
 // const { post } = require("../routes/indexRouter");
 // const { folder } = require("../db/prismaClient");
 // require("../config/passport.js");
@@ -28,7 +29,7 @@ async function getIndex(req, res) {
     if (folderId > 0) {
       selectedFolder = await queries.getFolderByIdAndUserId(folderId, userId);
       folderFiles = await queries.getFolderFiles(folderId, userId);
-      console.log("getIndex folderFiles:", folderFiles);
+      // console.log("getIndex folderFiles:", folderFiles);
       selectedFolder.files = folderFiles;
     }
     // console.log("getIndex selectedFolder:", selectedFolder);
@@ -159,6 +160,22 @@ async function postEditFolder(req, res) {
   }
 }
 
+async function getDeleteFolder(req, res) {
+  console.log(
+    "getDeleteFolder called userId:",
+    req.user.id,
+    "folderId:",
+    req.params.id
+  );
+  let userId = req.user.id;
+  let folderId = Number(req.params.id);
+  let selectedFolder = await queries.getFolderByIdAndUserId(folderId, userId);
+  res.render("deleteFolder", {
+    title: "Delete Folder",
+    selectedFolder: selectedFolder,
+  });
+}
+
 async function postUploadFile(req, res) {
   console.log(
     "postUploadFile called userId:",
@@ -202,6 +219,28 @@ async function postUploadFile(req, res) {
   }
 }
 
+async function getDeleteFile(req, res) {
+  console.log(
+    "getDeleteFile called userId:",
+    req.user.id,
+    "fileId:",
+    req.params.id
+  );
+  let userId = req.user.id;
+  let fileId = Number(req.params.id);
+  let selectedFile = await queries.getFileByIdAndUserId(fileId, userId);
+  // console.log("Selected File for deletion:", selectedFile);
+  let selectedFolder = await queries.getFolderByIdAndUserId(
+    selectedFile.folderId,
+    userId
+  );
+  res.render("deleteFile", {
+    title: "Delete File",
+    selectedFile: selectedFile,
+    selectedFolder: selectedFolder,
+  });
+}
+
 async function postDeleteFile(req, res) {
   console.log(
     "postDeleteFile called userId:",
@@ -211,20 +250,22 @@ async function postDeleteFile(req, res) {
   );
   const fileId = Number(req.params.id);
   try {
+    let folderId = await queries.getFolderIdByFileId(fileId);
     await queries.deleteFileById(fileId);
     req.flash("success", "File deleted successfully.");
-    res.redirect("/");
+    res.redirect("/folder/" + folderId);
   } catch (err) {
     console.error("Error deleting file:", err);
     req.flash("error", "File deletion failed. Please try again.");
-    return next(err);
+    throw err;
   }
 }
 
 async function getFile(req, res) {
   const fileId = Number(req.params.id);
+  const userId = req.user.id;
   try {
-    const file = await queries.getFileById(fileId);
+    const file = await queries.getFileByIdAndUserId(fileId, userId);
     if (!file) {
       req.flash("error", "File not found.");
       return res.redirect("/");
@@ -248,7 +289,9 @@ module.exports = {
   postDeleteFolder,
   getEditFolder,
   postEditFolder,
+  getDeleteFolder,
   postUploadFile,
+  getDeleteFile,
   postDeleteFile,
   getFile,
 };
