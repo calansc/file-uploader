@@ -194,7 +194,7 @@ async function getFileByIdAndUserId(fileId, userId) {
 }
 
 async function getFolderIdByFileId(fileId) {
-  console.log("DB Get Folder ID by File ID:", fileId);
+  // console.log("DB Get Folder ID by File ID:", fileId);
   try {
     const file = await prisma.file.findUnique({
       where: {

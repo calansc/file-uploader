@@ -17,6 +17,14 @@ indexRouter.get("/share/file/:id", isAuth, (req, res) => {
   indexController.getShareFile(req, res);
 });
 
+indexRouter.post("/share/folder/:id", isAuth, (req, res) => {
+  indexController.postShareFolder(req, res);
+});
+
+indexRouter.get("/share/folder/:id", isAuth, (req, res) => {
+  indexController.getShareFolder(req, res);
+});
+
 indexRouter.get("/files/:id", isAuth, (req, res) => {
   indexController.getFile(req, res);
 });

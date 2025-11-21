@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+</head>
+<body>
+    <% if(locals.success) {%>
+        <div><%= success %></div>
+    <% } %>
+        <% if(locals.error) {%>
+        <div><%= error %></div>
+    <% } %>
+    <% if (locals.user) {%>
+        <h1>Welcome, <%= user.username %>!</h1>
+        <form action="/logout" method="GET">
+            <button type="submit">Logout</button>
+        </form>
+        <div>
+            <h2>Generate a shared link:</h2>
+            <p>File Name: <%= selectedFolder.name %></p>
+            <form action="/share/folder/<%= selectedFolder.id %>" method="POST">
+                <label for="duration">Link Duration (in hours):</label>
+                <input type="number" id="duration" name="duration" min="1" value="24" required>
+                <button type="submit">Generate Link</button>
+            </form>
+            <form action="/folder/<%= selectedFolder.id %>" method="GET">
+                <button type="submit">Cancel</button>
+            </form>
+        </div> 
+    <% } else { %>
+         <h1>Hello File Uploaders!</h1>
+        <h3>Please login to upload and access files</h3>
+        <form action="/" method="GET">
+            <button type="submit">Go to Login</button>
+        </form>
+    <% } %>
+</body>
+</html>

@@ -1,6 +1,8 @@
 const queries = require("../db/queries");
 const bcryptjs = require("bcryptjs");
 const passport = require("../config/passport");
+const { post } = require("../routes/indexRouter");
+const { user } = require("../db/prismaClient");
 // const { get } = require("http");
 // const { post } = require("../routes/indexRouter");
 // const { folder } = require("../db/prismaClient");
@@ -160,6 +162,39 @@ async function postEditFolder(req, res) {
   }
 }
 
+async function getShareFolder(req, res) {
+  console.log(
+    "getShareFolder called userId:",
+    req.user.id,
+    "folderId:",
+    req.params.id
+  );
+  let userId = req.user.id;
+  let folderId = Number(req.params.id);
+  let selectedFolder = await queries.getFolderByIdAndUserId(folderId, userId);
+  // let selectedFile = null;
+  res.render("shareFolder", {
+    title: "Share Folder",
+    selectedFolder: selectedFolder,
+  });
+}
+
+async function postShareFolder(req, res) {
+  console.log(
+    "postShareFolder called userId:",
+    req.user.id,
+    "folderId:",
+    req.params.id,
+    "duration:",
+    req.body.duration
+  );
+  const userId = req.user.id;
+  const folderId = Number(req.params.id);
+  const durationHours = Number(req.body.duration);
+  // query db to create shareable link for folder
+  // uuid for link id?
+}
+
 async function getDeleteFolder(req, res) {
   console.log(
     "getDeleteFolder called userId:",
@@ -261,6 +296,39 @@ async function postDeleteFile(req, res) {
   }
 }
 
+async function getShareFile(req, res) {
+  console.log(
+    "getShareFile called userId:",
+    req.user.id,
+    "fileId:",
+    req.params.id
+  );
+  let userId = req.user.id;
+  let fileId = Number(req.params.id);
+  let folderId = await queries.getFolderIdByFileId(fileId);
+  let selectedFile = await queries.getFileByIdAndUserId(fileId, userId);
+  let selectedFolder = await queries.getFolderByIdAndUserId(folderId, userId);
+  res.render("shareFile", {
+    title: "Share File",
+    selectedFolder: selectedFolder,
+    selectedFile: selectedFile,
+  });
+}
+
+async function postShareFile(req, res) {
+  console.log(
+    "postShareFile called userId:",
+    req.user.id,
+    "fileId:",
+    req.params.id,
+    "duration:",
+    req.body.duration
+  );
+  const userId = req.user.id;
+  const fileId = Number(req.params.id);
+  const durationHours = Number(req.body.duration);
+}
+
 async function getFile(req, res) {
   const fileId = Number(req.params.id);
   const userId = req.user.id;
@@ -289,9 +357,13 @@ module.exports = {
   postDeleteFolder,
   getEditFolder,
   postEditFolder,
+  getShareFolder,
+  postShareFolder,
   getDeleteFolder,
   postUploadFile,
   getDeleteFile,
   postDeleteFile,
+  getShareFile,
+  postShareFile,
   getFile,
 };
