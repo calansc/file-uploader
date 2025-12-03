@@ -327,6 +327,71 @@ async function postShareFile(req, res) {
   const userId = req.user.id;
   const fileId = Number(req.params.id);
   const durationHours = Number(req.body.duration);
+  try {
+    const shareLink = await queries.createShareFileLink(
+      userId,
+      fileId,
+      durationHours
+    );
+    req.flash("success", "Shareable link created successfully.");
+    // render shareable link page or popup?
+    res.render("shareFileLink", {
+      title: "Shareable Link",
+      shareLink: shareLink,
+    });
+  } catch (err) {
+    console.error("Error creating shareable link:", err);
+    req.flash("error", "Creating shareable link failed. Please try again.");
+    return next(err);
+  }
+}
+
+async function getSharedLink(req, res) {
+  const token = req.params.id;
+  const dateNow = new Date();
+  try {
+    const sharedFileRef = await queries.getShareFile(token);
+    if (!sharedFileRef) {
+      req.flash("error", "Invalid or expired share link.");
+      return res.redirect("/");
+    }
+    if (sharedFileRef.expiresAt < dateNow) {
+      req.flash("error", "This share link has expired.");
+      return res.redirect("/");
+    }
+    res.render("sharedLink", {
+      title: "Shared Item",
+      sharedFileRef: sharedFileRef,
+    });
+  } catch (err) {
+    console.error("Error fetching shared link:", err);
+    req.flash("error", "Error accessing shared link. Please try again.");
+    return next(err);
+  }
+}
+
+async function downloadSharedLink(req, res) {
+  const token = req.params.id;
+  const dateNow = new Date();
+  try {
+    const sharedFileRef = await queries.getShareFile(token);
+    if (!sharedFileRef) {
+      req.flash("error", "Invalid or expired share link.");
+      return res.redirect("/");
+    }
+    if (sharedFileRef.expiresAt < dateNow) {
+      req.flash("error", "This share link has expired.");
+      return res.redirect("/");
+    }
+    res.download(
+      sharedFileRef.sharedFile.path,
+      sharedFileRef.sharedFile.fileName
+    );
+  } catch (err) {
+    console.error("Error downloading shared file:", err);
+    req.flash("error", "File download failed. Please try again.");
+    return next(err);
+  }
 }
 
 async function getFile(req, res) {
@@ -365,5 +430,7 @@ module.exports = {
   postDeleteFile,
   getShareFile,
   postShareFile,
+  getSharedLink,
+  downloadSharedLink,
   getFile,
 };

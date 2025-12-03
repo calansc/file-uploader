@@ -9,6 +9,14 @@ const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 },
 }); // 5 MB limit
 
+indexRouter.get("/sharedLink/download/:id", (req, res) => {
+  indexController.downloadSharedLink(req, res);
+});
+
+indexRouter.get("/sharedLink/:id", (req, res) => {
+  indexController.getSharedLink(req, res);
+});
+
 indexRouter.post("/share/file/:id", isAuth, (req, res) => {
   indexController.postShareFile(req, res);
 });

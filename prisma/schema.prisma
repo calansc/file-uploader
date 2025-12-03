@@ -58,6 +58,7 @@ model Folder {
 
 model ShareLink {
   id          Int      @id @default(autoincrement())
+  token       String   @unique
   expiresAt   DateTime
   itemType    DocType
   folder      Folder?  @relation(fields: [folderId], references: [id])

@@ -1,5 +1,5 @@
-const { get } = require("http");
 const prisma = require("../db/prismaClient");
+const { v4: uuidv4 } = require("uuid");
 
 async function createUser(username, password) {
   try {
@@ -209,6 +209,52 @@ async function getFolderIdByFileId(fileId) {
   }
 }
 
+async function createShareFileLink(userId, fileId, durationHours) {
+  console.log("DB Create Share File Link for fileId:", fileId);
+  let token = uuidv4();
+  let expiresAt = new Date();
+  expiresAt.setHours(expiresAt.getHours() + durationHours);
+  console.log("Generated token:", token, "expires at:", expiresAt);
+  try {
+    const shareLink = await prisma.shareLink.create({
+      data: {
+        token: token,
+        expiresAt: expiresAt,
+        itemType: "FILE",
+        user: { connect: { id: userId } },
+        file: { connect: { id: fileId } },
+      },
+    });
+    console.log("Created share link:", shareLink);
+    return shareLink;
+  } catch (err) {
+    console.error("Error creating share file link:", err);
+    throw err;
+  }
+}
+
+async function createShareFolderLink(userId, folderId, durationHours) {}
+
+async function getShareFile(token) {
+  try {
+    let sharedFileRef = await prisma.shareLink.findFirst({
+      where: {
+        token: token,
+      },
+    });
+    sharedFileRef.sharedFile = await getFileByIdAndUserId(
+      sharedFileRef.fileId,
+      sharedFileRef.userId
+    );
+    return sharedFileRef;
+  } catch (err) {
+    console.error("Error fetching share file by token:", err);
+    throw err;
+  }
+}
+
+async function getShareFolder(token) {}
+
 module.exports = {
   createUser,
   findUserByUsername,
@@ -223,4 +269,8 @@ module.exports = {
   deleteFileById,
   getFileByIdAndUserId,
   getFolderIdByFileId,
+  createShareFileLink,
+  createShareFolderLink,
+  getShareFile,
+  getShareFolder,
 };

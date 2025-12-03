@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+</head>
+<body>
+    <div>Shared file name:</div>
+    <%= sharedFileRef.sharedFile.fileName %>
+    <br>
+    file id: <%= sharedFileRef.sharedFile.id %>
+    <br>
+    user id: <%= sharedFileRef.sharedFile.userId %>
+    <br>
+    <div>Download link:</div>
+    <a href=/sharedLink/download/<%= sharedFileRef.token %>>Click here to Download</a>
+    <br>
+
+</body>
+</html>
